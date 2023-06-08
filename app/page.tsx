@@ -1,9 +1,9 @@
 "use client";
-
 import React, {useState, useEffect} from 'react';
-import {Group} from "@/interfaces/group";
-import {calculateRounds} from "@/utility/calculateRounds";
-
+import {Group} from '@/interfaces/group';
+import {calculateRounds} from '@/utility/calculateRounds';
+import IncreaseIcon from '@/components/IncreaseIcon';
+import DecreaseIcon from '@/components/DecreaseIcon';
 
 export default function Page() {
     const [groups, setGroups] = useState<Group[]>([
@@ -13,7 +13,12 @@ export default function Page() {
     ]);
 
     const [duration, setDuration] = useState<number>(5);
-    const [results, setResults] = useState<{ name: string; rounds: number; timeToMeetAll: number; pisteUtilizationRatio: number }[]>([]);
+    const [results, setResults] = useState<{
+        name: string;
+        rounds: number;
+        timeToMeetAll: number;
+        pisteUtilizationRatio: number;
+    }[]>([]);
     const [maxPistes, setMaxPistes] = useState<number>(6);
 
     const updateGroup = (updatedGroup: Group) => {
@@ -34,7 +39,6 @@ export default function Page() {
         }
         return allocations;
     };
-
 
     useEffect(() => {
         setResults(calculateRounds(groups, duration, maxPistes));
@@ -78,29 +82,29 @@ export default function Page() {
             <div className="flex flex-row justify-between">
                 <label className="block mb-4">
                     Fencing Time
-                    <input
-                        className="mt-1 block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        type="number"
-                        min="1"
-                        value={duration}
-                        onChange={(e) => setDuration(Number(e.target.value))}
-                    />
-                    <p
-                        className={`italic pt-2`}
-                    >
-                        in minutes
-                    </p>
+                    <div className="mt-1 flex items-center">
+                        <button onClick={() => setDuration(Math.max(duration - 1, 1))}>
+                            <DecreaseIcon></DecreaseIcon>
+                        </button>
+                        <span className="mx-2 w-4 font-bold">{duration}</span>
+                        <button onClick={() => setDuration(Math.min(duration + 1, 10))}>
+                            <IncreaseIcon></IncreaseIcon>
+                        </button>
+                    </div>
+                    <p className="italic pt-2">in minutes</p>
                 </label>
                 <div className="mb-6">
                     <label className="block mb-2">
                         Max Piste
-                        <input
-                            className="mt-1 block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                            type="number"
-                            min="3"
-                            value={maxPistes}
-                            onChange={(e) => setMaxPistes(Math.max(Number(e.target.value), 3))}
-                        />
+                        <div className="mt-1 flex items-center">
+                            <button onClick={() => setMaxPistes(Math.max(maxPistes - 1, 1))}>
+                                <DecreaseIcon></DecreaseIcon>
+                            </button>
+                            <span className="mx-2 w-4 font-bold">{maxPistes}</span>
+                            <button onClick={() => setMaxPistes(Math.min(maxPistes + 1, 10))}>
+                                <IncreaseIcon></IncreaseIcon>
+                            </button>
+                        </div>
                     </label>
                     <p
                         className={`font-bold ${
@@ -115,33 +119,45 @@ export default function Page() {
                 {groups.map((group) => (
                     <div key={group.name} className="mb-6">
                         <h2 className="text-xl font-bold">{group.name}</h2>
-                        <label className="block mt-2">
-                            Fencers:
-                            <input
-                                className="mt-1 block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                type="number"
-                                min="2"
-                                value={group.numberOfFencers}
-                                onChange={(e) => updateGroup({...group, numberOfFencers: Number(e.target.value)})}
-                            />
-                        </label>
-                        <label className="block mt-2">
-                            Pistes:
-                            <input
-                                className="mt-1 block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                type="number"
-                                min="0"
-                                value={group.numberOfPistes}
-                                onChange={(e) => handleNumberOfPistesChange(group, Number(e.target.value))}
-                            />
-                        </label>
+                        <div className="my-4 flex items-center">
+                            <button
+                                onClick={() =>
+                                    updateGroup({...group, numberOfFencers: Math.max(group.numberOfFencers - 1, 2)})
+                                }
+                            >
+                                <DecreaseIcon></DecreaseIcon>
+                            </button>
+                            <span className="mx-2 w-4 text-center font-bold">{group.numberOfFencers}</span>
+                            <button
+                                onClick={() =>
+                                    updateGroup({...group, numberOfFencers: Math.min(group.numberOfFencers + 1, 99)})
+                                }
+                            >
+                                <IncreaseIcon></IncreaseIcon>
+                            </button>
+                        </div>
+                        <div className="mt-2 flex items-center">
+                            <button
+                                onClick={() =>
+                                    handleNumberOfPistesChange(group, Math.max(group.numberOfPistes - 1, 1))
+                                }
+                            >
+                                <DecreaseIcon></DecreaseIcon>
+                            </button>
+                            <span className="mx-2 w-4 font-bold">{group.numberOfPistes}</span>
+                            <button
+                                onClick={() =>
+                                    handleNumberOfPistesChange(group, Math.min(group.numberOfPistes + 1, 10))
+                                }
+                            >
+                                <IncreaseIcon></IncreaseIcon>
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
             <div className="flex flex-row justify-between">
-                <h2 className="text-xl font-bold">
-                    Results:
-                </h2>
+                <h2 className="text-xl font-bold">Results:</h2>
                 <button
                     className="ml-1 px-2 py-1 bg-blue-500 text-white text-xs rounded-md"
                     onClick={() => setShowMore(!showMore)}
@@ -180,8 +196,9 @@ export default function Page() {
             <div className="flex flex-row justify-evenly">
                 {groups.map((group, i) => (
                     <div key={group.name} className="mb-6">
-                        <h3 className="text-lg font-semibold">{group.name}: <span
-                            className="font-bold">{suggestedAllocation[i]}</span></h3>
+                        <h3 className="text-lg font-semibold">
+                            {group.name}: <span className="font-bold">{suggestedAllocation[i]}</span>
+                        </h3>
                     </div>
                 ))}
             </div>
@@ -195,5 +212,4 @@ export default function Page() {
             </div>
         </div>
     );
-
 }
