@@ -119,7 +119,8 @@ export default function Page() {
                 {groups.map((group) => (
                     <div key={group.name} className="mb-6">
                         <h2 className="text-xl font-bold">{group.name}</h2>
-                        <div className="my-4 flex items-center">
+                        <p className="mt-2">Fencers: </p>
+                        <div className="flex items-center">
                             <button
                                 onClick={() =>
                                     updateGroup({...group, numberOfFencers: Math.max(group.numberOfFencers - 1, 2)})
@@ -136,7 +137,8 @@ export default function Page() {
                                 <IncreaseIcon></IncreaseIcon>
                             </button>
                         </div>
-                        <div className="mt-2 flex items-center">
+                        <p className="mt-2">Piste: </p>
+                        <div className="flex items-center">
                             <button
                                 onClick={() =>
                                     handleNumberOfPistesChange(group, Math.max(group.numberOfPistes - 1, 1))
